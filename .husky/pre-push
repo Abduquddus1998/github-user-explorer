@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+
+echo "Running TypeScript type check..."
+npm run typecheck || exit 1
+
+TEST_COUNT=$(find src -type f \( -name "*.test.ts" -o -name "*.test.tsx" -o -name "*.spec.ts" -o -name "*.spec.tsx" \) | wc -l | tr -d ' ')
+
+if [ "$TEST_COUNT" -gt 0 ]; then
+  echo "Running Vitest tests..."
+  npm run test:run || exit 1
+else
+  echo "No tests found, skipping Vitest..."
+fi
+
+echo "Building project..."
+npm run build || exit 1

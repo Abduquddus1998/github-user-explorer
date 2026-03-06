@@ -14,6 +14,8 @@ export default function Home() {
           height={20}
           priority
         />
+
+        <div>Checking husky</div>
         <div className={styles.intro}>
           <h1>To get started, edit the page.tsx file.</h1>
           <p>

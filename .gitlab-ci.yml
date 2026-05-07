@@ -1,0 +1,70 @@
+image: node:20
+
+stages:
+  - install
+  - lint
+  - test
+  - build
+  - deploy
+
+cache:
+  key:
+    files:
+      - package-lock.json
+  paths:
+    - node_modules/
+
+install_dependencies:
+  stage: install
+  script:
+    - npm ci
+
+lint:
+  stage: lint
+  script:
+    - npm run lint
+
+type-check:
+  stage: test
+  script:
+    - npx tsc --noEmit
+
+test:
+  stage: test
+  script:
+    - npm run test
+  artifacts:
+    paths:
+      - coverage/
+
+build:
+  stage: build
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+
+deploy_staging:
+  stage: deploy
+  script:
+    - echo "Deploying to staging environment..."
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "develop"'
+
+deploy_production:
+  stage: deploy
+  script:
+    - echo "Deploying to production environment..."
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+pages:
+  stage: deploy
+  script:
+    - mv dist public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
